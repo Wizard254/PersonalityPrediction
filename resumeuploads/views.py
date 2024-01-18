@@ -1,5 +1,5 @@
 import threading
-import time
+# import time
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -9,8 +9,8 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .forms import DocumentForm
-from .models import Document, JobDescription
+from resumeuploads.forms import DocumentForm
+from resumeuploads.models import Document, JobDescription
 # from .serializers import DocumentSerializer
 # import json
 # from snippets.models import Snippet

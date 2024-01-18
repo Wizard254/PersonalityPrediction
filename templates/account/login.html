@@ -1,0 +1,54 @@
+{% extends "account/base_entrance.html" %}
+{% load static %}
+{% load i18n %}
+{% load allauth account socialaccount %}
+{% block head_title %}
+    {% trans "Sign In" %}
+{% endblock head_title %}
+
+{% block extra_head %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap"/>
+    <link  rel="stylesheet"
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+{% endblock %}
+
+{% block content %}
+    {# We don't need this   #}
+    {#    {% element h1 %}#}
+    {#        {% trans "Sign In" %}#}
+    {#    {% endelement %}#}
+    {#    <p>#}
+    {#        {% blocktrans %}If you have not created an account yet, then please#}
+    {#    <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}#}
+    {#    </p>#}
+    {% url 'account_login' as login_url %}
+    <div class="wrapper">
+    <h1>Login</h1>
+    {% element form form=form method="post" action=login_url tags="entrance,login" %}
+        {% slot body %}
+            {% csrf_token %}
+            {% element fields form=form unlabeled=True %}
+            {% endelement %}
+            {% if redirect_field_value %}
+                <input type="hidden"
+                       name="{{ redirect_field_name }}"
+                       value="{{ redirect_field_value }}" />
+            {% endif %}
+        {% endslot %}
+        {% slot actions %}
+            {% element button type="submit" tags="prominent,login" %}
+                {% trans "Log In" %}
+            {% endelement %}
+        {% endslot %}
+    {% endelement %}
+    </div>
+    {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+
+    <script src="{% static 'js/login.js' %}"></script>
+{% endblock content %}

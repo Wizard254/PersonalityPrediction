@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personality Prediction</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      padding-top: 80px;
+    }
+
+    .jumbotron {
+      background-image: url("{% static 'img/cbimage.png' %}");
+      background-size: cover;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .jumbotron h1 {
+      font-size: 48px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .btn-primary {
+      background-color: #ff6b6b;
+      border-color: #ff6b6b;
+    }
+
+    .btn-primary:hover {
+      background-color: #ff4d4d;
+      border-color: #ff4d4d;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Personality Prediction</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+{#          <li class="nav-item">#}
+{#            <a class="nav-link" href="#">About</a>#}
+{#          </li>#}
+{#          <li class="nav-item">#}
+{#            <a class="nav-link" href="#">Services</a>#}
+{#          </li>#}
+{#          <li class="nav-item">#}
+{#            <a class="nav-link" href="#">Contact</a>#}
+{#          </li>#}
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="jumbotron text-center">
+      <div class="container">
+        <h1 class="display-4">Discover Your True Personality</h1>
+        <p style="color: aliceblue">Unlock the secrets of your personality through our advanced prediction algorithms.</p>
+        <a href="/resume-home" class="btn btn-primary btn-lg">Get Started</a>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="row row-gap-1">
+        <div class="card col-md-4">
+          <h2>Easy to Use</h2>
+          <p>Our personality prediction model offers a seamless and user-friendly experience. With a simple input process, intuitive navigation, and automated analysis, users can easily access their personalized results. The model provides instant and comprehensive reports, presented in a clear and understandable format. Accessible across multiple devices, our model ensures that users can effortlessly engage with the assessment tool, gaining valuable insights into their personality traits and behaviors without any technical complexities or barriers.</p>
+        </div>
+        <div class="card col-md-4">
+          <h2>Accurate Results</h2>
+          <p>Our personality prediction model is built upon robust algorithms and extensive data analysis, ensuring the production of highly accurate results. By leveraging advanced machine learning techniques, our model continuously learns and improves from vast amounts of data, enabling it to make precise predictions about an individual's personality. The model takes into account various factors, such as responses to carefully designed assessment questions and established psychological theories, to generate reliable and insightful outcomes. Rigorous testing and validation processes further enhance the accuracy of our model, providing users with trustworthy and dependable personality predictions that they can rely on for self-discovery and personal growth.</p>
+        </div>
+        <div class="card col-md-4">
+          <h2>Privacy Protection</h2>
+          <p>At our core, we prioritize the privacy and confidentiality of our users. Our personality prediction model is built with robust privacy protection measures to ensure the security of personal data. We adhere to strict data handling practices, implementing advanced encryption techniques to safeguard any information provided during the assessment process. We follow industry best practices and comply with relevant data protection regulations to guarantee the privacy of user data. Additionally, we do not share or sell any personal information to third parties. By maintaining a strong commitment to privacy, we provide users with a safe and trusted environment to explore their personality traits without compromising their sensitive data.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-dark text-white text-center py-4">
+    <p>&copy; 2024 Personality Prediction. All rights reserved.</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

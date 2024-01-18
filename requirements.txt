@@ -1,0 +1,15 @@
+numpy
+pandas
+contractions
+nltk
+gensim
+wordcloud
+seaborn
+matplotlib
+joblib
+tensorflow
+keras
+djangorestframework
+django
+django-allauth
+fitz

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .progress-circle {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<form>
+    {%  csrf_token %}
+</form>
+
+<p>Predicted Personality: </p>
+<div id="id40"></div>
+
+<p>Predicted Category: </p>
+<p>Job Recommendations: </p>
+
+<script>
+
+    const fetchData = async () => {
+        {#const url = '/upload/'; // Replace with your server's endpoint#}
+        const url = '/resume-info/'; // Replace with your server's endpoint
+        {#const url = '/resume-mbti/'; // Replace with your server's endpoint#}
+
+        const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                // Add any request headers if needed
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json; indent=4',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include', // Include session cookies
+                body: JSON.stringify({
+                    resume_id: 1,
+                    name: 'bob'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Request failed');
+            }
+
+            const data = await response.json();
+            const mbti =  data['mbti'];
+            const divElement = document.getElementById('id40');
+
+            if (mbti === null) {
+                setTimeout(fetchData, 1000)
+                console.log("Still waiting for server predicted mbti...")
+            } else {
+                divElement.textContent = mbti
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const startProgress = () => {
+        const divElement = document.getElementById('id40');
+        divElement.innerHTML = '<div class="progress-circle"></div>';
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        startProgress();
+        fetchData();
+    })
+
+
+</script>
+</body>
+</html>

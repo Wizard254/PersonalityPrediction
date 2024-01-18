@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class Document(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    file = models.FileField(upload_to='resumes/')
+    file = models.FileField(upload_to='/persist_vol/resumes/')
     name = models.CharField(max_length=255, null=True)
     mbti = models.CharField(max_length=4, null=True)
     category = models.CharField(max_length=255, null=True)

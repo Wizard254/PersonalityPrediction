@@ -25,8 +25,6 @@ RUN git clone https://github.com/Wizard254/PersonalityPrediction.git
 RUN #mkdir -p init/
 RUN mv job_descriptions.csv init/
 
-COPY . .
-
 RUN python3 unzipall.py
 
 RUN pip install --upgrade pip

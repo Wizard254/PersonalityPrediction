@@ -20,7 +20,9 @@ RUN #curl "https://dl.dropboxusercontent.com/scl/fi/avs25ye5a6f5j3934ka6n/requir
 RUN #curl "https://dl.dropboxusercontent.com/scl/fi/3g05vn6yydpmhx96wbn7d/unzipall.py?rlkey=v9bl9dlj797tsdvzxzhkb5tr4&dl=0" -o unzipall.py -s
 RUN curl "https://dl.dropboxusercontent.com/scl/fi/mdvwmbc8pp0905ha6ueb5/job_descriptions.csv?rlkey=r37kelksrxkoq98m8uruf0kb6&dl=0" -o job_descriptions.csv -s
 
-RUN mkdir -p init/
+# Clone the Personality Prediction repository
+RUN git clone https://github.com/Wizard254/PersonalityPrediction.git
+RUN #mkdir -p init/
 RUN mv job_descriptions.csv init/
 
 COPY . .

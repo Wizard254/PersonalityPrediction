@@ -47,4 +47,4 @@ EXPOSE 8080
 #ENTRYPOINT ["streamlit", "run", "personalityprediction.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
 #ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8080"]
-ENTRYPOINT ["python",  "-m", "uvicorn", "PersonalityPrediction.asgi:application"]
+ENTRYPOINT ["python",  "-m", "uvicorn", "--port", "8080", "PersonalityPrediction.asgi:application"]

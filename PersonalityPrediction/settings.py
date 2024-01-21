@@ -94,8 +94,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-WSGI_APPLICATION = 'PersonalityPrediction.wsgi.application'
-# ASGI_APPLICATION = 'PersonalityPrediction.asgi.application'
+# WSGI_APPLICATION = 'PersonalityPrediction.wsgi.application'
+ASGI_APPLICATION = 'PersonalityPrediction.asgi.application'
 
 PERSIST_VOL = '/persist_vol' if not LOCAL else './'
 

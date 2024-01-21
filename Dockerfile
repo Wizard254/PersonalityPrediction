@@ -31,6 +31,11 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install scikit-learn scipy PyMuPDF
 
 RUN python3 installs.py
+
+# Set environment variables for Django
+ENV DJ_LOCAL=False
+ENV DJ_DEBUG=True
+
 RUN python3 manage.py makemigrations
 RUN python3 manage.py migrate
 # RUN python3 tmp.py

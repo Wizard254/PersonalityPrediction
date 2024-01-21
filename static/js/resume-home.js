@@ -34,51 +34,53 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const fetchData = async function (id) {
-        const url = '/resume-jobs/'; // Replace with your server's endpoint
-        const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value
+        const url = '/sse/?id=' + id;
 
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                // Add any request headers if needed
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json; indent=4',
-                    'X-CSRFToken': csrfToken
-                },
-                credentials: 'include', // Include session cookies
-                body: JSON.stringify({
-                    resume_id: id,
-                    name: 'bob'
-                })
-            });
+        const evtSource = new EventSource(url, {
+            withCredentials: true,
+        });
 
-            if (!response.ok) {
-                throw new Error('Request failed');
-            }
+        evtSource.onmessage = (event) => {
+            const newElement = document.createElement("li");
+            const eventList = document.getElementById("sse");
 
-            const data = await response.json();
-            const mbti = data['mbti'];
-            const ok = data['ok']
+            newElement.textContent = `message: ${event.data}`;
+            eventList.appendChild(newElement);
+        };
+
+        evtSource.addEventListener("error", (event) => {
+            // const error = JSON.parse(event.data)
+            const error = event.data
+            const element = document.getElementById("error-in-modal");
+            // element.textContent = error['detail']
+            element.textContent = error
+        });
+
+        evtSource.addEventListener("prediction", (event) => {
+            const prediction = JSON.parse(event.data)
+            const mbti = prediction['mbti']
+
             const divElement = document.getElementById('id40');
+            divElement.textContent = mbti
 
-            if (!ok) {
-                setTimeout(function () {
-                    fetchData(id)
-                }, 5000)
-                console.log("Still waiting for server predicted mbti...")
-            } else {
-                hideProgress()
-                document.getElementById('jobTable').style.display = 'table'
-                divElement.textContent = mbti
-                displayJobs(data['jobs'])
+            document.getElementById('id41').textContent = mbtiPersonalityTypes[mbti];
+        });
 
-                document.getElementById('id41').textContent = mbtiPersonalityTypes[mbti];
-            }
+        evtSource.addEventListener("recommendations", (event) => {
+            const jobs = JSON.parse(event.data)
+            hideProgress()
+            document.getElementById('jobTable').style.display = 'table'
+            displayJobs(jobs)
+            evtSource.close()
+        });
 
-        } catch (error) {
-            console.error('Error:', error);
-        }
+        evtSource.addEventListener("ping", (event) => {
+            const newElement = document.createElement("li");
+            const eventList = document.getElementById("list");
+            const time = JSON.parse(event.data).time;
+            newElement.textContent = `ping at ${time}`;
+            eventList.appendChild(newElement);
+        });
     }
 
     function displayJobs(data) {
@@ -158,13 +160,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         showProgress()
         fetchData(resumeId).then()
-
-        // Simulate data retrieval delay
-        // setTimeout(() => {
-        //     hideProgress();
-        // }, 50000000);
-
-
     }
 
     // Get all elements with the specified class

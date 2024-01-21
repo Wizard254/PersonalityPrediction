@@ -1,8 +1,10 @@
+import asyncio
+import dataclasses
+import json
 import threading
-# import time
 
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotFound, StreamingHttpResponse
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
@@ -11,10 +13,6 @@ from rest_framework.response import Response
 
 from resumeuploads.forms import DocumentForm
 from resumeuploads.models import Document, JobDescription
-# from .serializers import DocumentSerializer
-# import json
-# from snippets.models import Snippet
-# from snippets.serializers import SnippetSerializer
 
 
 @login_required
@@ -39,8 +37,7 @@ def resume_home(request):
     if user_documents.count() == 0:
         return redirect('upload')
         pass
-    return render(request, 'resumeuploads/resume-home.html',
-                  {'user_documents': user_documents})
+    return render(request, 'resumeuploads/resume-home.html', {'user_documents': user_documents})
 
 
 running_jobs = []
@@ -89,8 +86,7 @@ def resume_mbti(request):
             perform_background_task(resume_id)
             pass
 
-        return JsonResponse({'mbti': mbti})
-        # return JsonResponse({'message': f'Key: {key}, Name: {name}'})
+        return JsonResponse({'mbti': mbti})  # return JsonResponse({'message': f'Key: {key}, Name: {name}'})
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     pass
@@ -123,24 +119,8 @@ def resume_info(request, format=None):
             running_jobs.append(resume_id)
             perform_background_task(resume_id)
             pass
-
-        # serializer = DocumentSerializer(doc)
-        # return Response(serializer.data)
         return Response({'mbti': doc.mbti})
         pass
-
-    #
-    # if request.method == 'GET':
-    #     snippets = Snippet.objects.all()
-    #     serializer = SnippetSerializer(snippets, many=True)
-    #     return Response(serializer.data)
-    #
-    # elif request.method == 'POST':
-    #     serializer = SnippetSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -176,3 +156,91 @@ def resume_jobs(request):
         response['category'] = doc.category
         return Response(response)
         pass
+
+
+def sse_view(request):
+    resume_id = request.GET.get('id')
+    rs = Document.objects.filter(pk=int(resume_id))
+    doc: Document = rs.first()
+
+    if doc is None:
+        return HttpResponseNotFound()
+
+    response = StreamingHttpResponse(streaming_content=sse_event_generator(resume_id), content_type='text/event-stream')
+    response['Cache-Control'] = 'no-cache'
+    response['Connection'] = 'keep-alive'
+    response['Access-Control-Allow-Origin'] = '*'
+    return response
+
+
+def sse_event_generator(resume_id):
+    # SSE events format: "event: eventName\ndata: someData\n\n"
+    import runpredictor
+    import runpredictorclient
+
+    rs = Document.objects.filter(pk=int(resume_id))
+    doc: Document = rs.first()
+
+    @dataclasses.dataclass
+    class EventPrediction:
+        mbti: str
+        category: str
+        pass
+
+    def event(name: str, data) -> str:
+        return f"event: {name}\ndata: {json.dumps(data)}\n\n"
+        pass
+
+    def check_doc() -> bool:
+        return doc.mbti is not None and doc.category is not None
+        pass
+
+    def get_job_recommendations():
+        jobs = []
+        for jd in JobDescription.objects.filter(category=doc.category)[:100]:
+            jobs.append({'title': jd.title, 'description': jd.description})
+            pass
+        return jobs
+        pass
+
+    def get_job_recommendations_json():
+        rec_jobs = get_job_recommendations()
+        return event('recommendations', rec_jobs)
+        pass
+
+    def get_personality_category() -> str:
+        return event('prediction', EventPrediction(doc.mbti, doc.category).__dict__)
+        pass
+
+    try:
+        # Do some work here
+        if check_doc():
+            yield get_personality_category()
+            yield get_job_recommendations_json()
+            pass
+
+        elif runpredictor.ping():
+            # f = (r"C:\Users\Anyona\AWork\Mandela\Unit\Personality "
+            #      r"ML\PersonalityPrediction\PersonalityPrediction\data\usecase1\resume.pdf")
+            prediction = runpredictorclient.predict_personality(doc.file.name)
+            if prediction is None:
+                return
+                pass
+
+            # Save this prediction to database
+            doc.mbti, doc.category = prediction.mbti, prediction.category
+            doc.save()
+
+            yield get_personality_category()
+            if check_doc():
+                yield get_job_recommendations_json()
+                pass
+            pass
+        else:
+            yield event('error', {'detail': "Server prediction subprocess not running "
+                                            "Was it started? Did it die?"})
+            pass
+    except asyncio.CancelledError:
+        # Handle disconnect
+        ...
+        raise

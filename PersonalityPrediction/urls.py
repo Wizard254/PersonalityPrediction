@@ -20,7 +20,7 @@ from django.views.generic import TemplateView
 from rest_framework import routers
 
 from resumeuploads.views import (upload_document, resume_home, resume_jobs,
-                                 resume_mbti, tmp_view, resume_info)
+                                 resume_mbti, tmp_view, resume_info, sse_view)
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -44,5 +44,7 @@ urlpatterns = [
 
     # Tests
     path('tmp/table', TemplateView.as_view(template_name='tmp/table.html'), name='table'),
+    path('tmp/sse', TemplateView.as_view(template_name='tmp/sse.html'), name='table'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('sse/', sse_view, name='sse'),
 ]

@@ -44,10 +44,10 @@ ENV DJ_DEBUG=True
 #RUN python3 manage.py migrate
 #RUN python3 tmp.py
 
-EXPOSE 8080
+EXPOSE 80
 
 #HEALTHCHECK CMD curl --fail http://localhost:8000/_stcore/health
 #ENTRYPOINT ["streamlit", "run", "personalityprediction.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
 #ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8080"]
-ENTRYPOINT ["python",  "-m", "uvicorn", "--port", "8080", "PersonalityPrediction.asgi:application"]
+ENTRYPOINT ["python",  "-m", "uvicorn", "--host", "0.0.0.0", "--port", "80", "PersonalityPrediction.asgi:application"]

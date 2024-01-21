@@ -1,8 +1,6 @@
-# app4/Dockerfile
-
 FROM python:3.11-slim
 
-WORKDIR /app4
+WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -33,8 +31,8 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install scikit-learn scipy PyMuPDF
 
 RUN python3 installs.py
-# RUN python3 manage.py makemigrations
-# RUN python3 manage.py migrate
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate
 # RUN python3 tmp.py
 
 EXPOSE 8080
@@ -43,4 +41,5 @@ EXPOSE 8080
 #HEALTHCHECK CMD curl --fail http://localhost:8000/_stcore/health
 #ENTRYPOINT ["streamlit", "run", "personalityprediction.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
-ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+#ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+ENTRYPOINT ["python",  "-m", "uvicorn", "PersonalityPrediction.asgi:application"]

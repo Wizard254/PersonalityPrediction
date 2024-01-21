@@ -40,12 +40,11 @@ RUN python3 installs.py
 ENV DJ_LOCAL=False
 ENV DJ_DEBUG=True
 
-RUN python3 manage.py makemigrations
-RUN python3 manage.py migrate
-# RUN python3 tmp.py
+#RUN python3 manage.py makemigrations
+#RUN python3 manage.py migrate
+#RUN python3 tmp.py
 
 EXPOSE 8080
-#EXPOSE 80
 
 #HEALTHCHECK CMD curl --fail http://localhost:8000/_stcore/health
 #ENTRYPOINT ["streamlit", "run", "personalityprediction.py", "--server.port=8501", "--server.address=0.0.0.0"]

@@ -19,7 +19,7 @@ RUN #curl "https://dl.dropboxusercontent.com/scl/fi/3g05vn6yydpmhx96wbn7d/unzipa
 RUN curl "https://dl.dropboxusercontent.com/scl/fi/mdvwmbc8pp0905ha6ueb5/job_descriptions.csv?rlkey=r37kelksrxkoq98m8uruf0kb6&dl=0" -o job_descriptions.csv -s
 
 # Clone the Personality Prediction repository
-RUN git clone https://github.com/Wizard254/PersonalityPrediction.git
+RUN git clone https://github.com/Wizard254/PersonalityPrediction.git .
 RUN #mkdir -p init/
 RUN mv job_descriptions.csv init/
 

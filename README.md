@@ -50,5 +50,16 @@ docker exec -it 082152f243e2 bash
 ```
 
 
+```shell
+docker build -t personalityprediction2024_01_22 .
+docker run -p 8080:8080 personalityprediction2024_01_22
+docker run -dp 8080:8080 personalityprediction2024_01_22
+
+docker exec -it 082152f243e2 bash
+
+
+```
+
+
 
 

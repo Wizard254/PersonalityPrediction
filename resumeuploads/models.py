@@ -6,12 +6,10 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from pathlib import Path
 
-PERSIST_VOL = getattr(settings, "PERSIST_VOL", '')
-
 
 class Document(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    file = models.FileField(upload_to=Path(PERSIST_VOL) / 'resumes/')
+    file = models.FileField(upload_to='resumes/')
     name = models.CharField(max_length=255, null=True)
     mbti = models.CharField(max_length=4, null=True)
     category = models.CharField(max_length=255, null=True)

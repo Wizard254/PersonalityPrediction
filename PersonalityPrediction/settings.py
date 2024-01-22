@@ -99,6 +99,9 @@ ASGI_APPLICATION = 'PersonalityPrediction.asgi.application'
 
 PERSIST_VOL = '/persist_vol' if not LOCAL else './'
 
+MEDIA_ROOT = PERSIST_VOL if not LOCAL else ''
+MEDIA_URL = '/media/'
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 

@@ -47,4 +47,8 @@ EXPOSE 80
 
 #ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8080"]
 #ENTRYPOINT ["python",  "-m", "uvicorn", "--host", "0.0.0.0", "--port", "80", "PersonalityPrediction.asgi:application"]
+
+# Give executable permissions to the entrypoint file
+RUN chmod a+x ./entrypoint.sh
+
 ENTRYPOINT ["./entrypoint.sh"]

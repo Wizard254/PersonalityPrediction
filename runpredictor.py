@@ -281,21 +281,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # We need to log the output of this program to a file
-    # Open the log file in write mode
-    with open('/persist_vol/runpredictor.log.txt', 'w') as f:
-        # Redirect standard output and standard error to the log file
-        sys.stdout = f
-        sys.stderr = f
-
-        # Display some entrypoint message
-        print("-" * 50)
-        print("--STARTING")
-        print("-" * 50)
-
-        main()
-        print("--END")
-        pass
+    main()
     pass
 
 

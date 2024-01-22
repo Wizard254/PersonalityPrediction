@@ -1,9 +1,10 @@
 import json
 import socket
 import socketserver
-import sys
 import threading
 from dataclasses import dataclass
+
+from loguru import logger
 
 import heavyimport
 
@@ -132,13 +133,16 @@ def main():
                 return self.request.sendall(response.data())
                 pass
             elif request.rtype == ConstRequestTypes.WAIT_FOR_PREDICTION:
+                @logger.catch
                 def its_dangerous():
                     import time
                     # Load the model
                     start = time.time()
-                    print(f'[WAIT] Loading model...')
+                    logger.info("Loading Model..")
+                    # print(f'[WAIT] Loading model...')
                     heavyimport.load_model()
-                    print(f'[WAIT] Model Loaded ({time.time() - start} ms)')
+                    # print(f'[WAIT] Model Loaded ({time.time() - start} ms)')
+                    logger.info(f'Model Loaded ({time.time() - start} seconds)')
                     # Wait for predictions
                     mbti, category = heavyimport.predict(request.resume)
                     # Return prediction
@@ -167,7 +171,6 @@ def main():
                 try:
                     response.status = 1000
                     self.request.sendall(response.data())
-
                     heavyimport.load_model()
                     lock.acquire()
                     status = 2
@@ -195,7 +198,7 @@ def main():
                     queue_lock.acquire()
                     if request.resume in prediction_queue:
                         # TODO: Another thread is currently processing the prediction for this resume
-                        print('Another thread is currently processing the prediction for this resume')
+                        logger.warning('Another thread is currently processing the prediction for this resume')
                         queue_lock.release()
                         pass
                     else:
@@ -252,11 +255,11 @@ def main():
 
     try:
         ip, port = server.server_address
-        print(f'Server running at https://{ip}:{port} (Press CTRL+C to quit)')
+        logger.info(f'Server running at https://{ip}:{port} (Press CTRL+C to quit)')
         server.serve_forever()
         pass
     except KeyboardInterrupt:
-        print(f'Shutting down')
+        logger.info(f'Shutting down')
         server.shutdown()
         pass
 
@@ -281,6 +284,7 @@ def main():
 
 
 if __name__ == '__main__':
+    logger.add("log.runpredictor.log", rotation="500 MB")
     main()
     pass
 

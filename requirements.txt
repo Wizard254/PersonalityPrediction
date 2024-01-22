@@ -20,3 +20,4 @@ uvicorn
 gunicorn
 whitenoise
 djoser
+loguru

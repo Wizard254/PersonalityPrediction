@@ -212,35 +212,33 @@ def sse_event_generator(resume_id):
         return event('prediction', EventPrediction(doc.mbti, doc.category).__dict__)
         pass
 
-    try:
-        # Do some work here
+    # Do some work here
+    if check_doc():
+        yield get_personality_category()
+        yield get_job_recommendations_json()
+        return
+        pass
+
+    elif runpredictor.ping():
+        # f = (r"C:\Users\Anyona\AWork\Mandela\Unit\Personality "
+        #      r"ML\PersonalityPrediction\PersonalityPrediction\data\usecase1\resume.pdf")
+        prediction = runpredictorclient.predict_personality(doc.file.path)
+        if prediction is None:
+            return
+            pass
+
+        # Save this prediction to database
+        doc.mbti, doc.category = prediction.mbti, prediction.category
+        doc.save()
+
+        yield get_personality_category()
         if check_doc():
-            yield get_personality_category()
             yield get_job_recommendations_json()
             pass
-
-        elif runpredictor.ping():
-            # f = (r"C:\Users\Anyona\AWork\Mandela\Unit\Personality "
-            #      r"ML\PersonalityPrediction\PersonalityPrediction\data\usecase1\resume.pdf")
-            prediction = runpredictorclient.predict_personality(doc.file.path)
-            if prediction is None:
-                return
-                pass
-
-            # Save this prediction to database
-            doc.mbti, doc.category = prediction.mbti, prediction.category
-            doc.save()
-
-            yield get_personality_category()
-            if check_doc():
-                yield get_job_recommendations_json()
-                pass
-            pass
-        else:
-            yield event('error', {'detail': "Server prediction subprocess not running "
-                                            "Was it started? Did it die?"})
-            pass
-    except asyncio.CancelledError:
-        # Handle disconnect
-        ...
-        raise
+        return
+        pass
+    else:
+        yield event('error', {'detail': "Server prediction subprocess not running "
+                                        "Was it started? Did it die?"})
+        return
+        pass

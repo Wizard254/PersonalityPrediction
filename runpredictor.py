@@ -1,6 +1,7 @@
 import json
 import socket
 import socketserver
+import sys
 import threading
 from dataclasses import dataclass
 
@@ -108,14 +109,13 @@ def ping() -> bool:
     pass
 
 
-if __name__ == '__main__':
+def main():
     prediction_queue = []
     prediction_cache: dict[str, list] = {}
     status: int = 0
 
     lock = threading.Lock()
     queue_lock = threading.Lock()
-
 
     class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
@@ -245,10 +245,8 @@ if __name__ == '__main__':
                 pass
             pass
 
-
     class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         pass
-
 
     server = ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
 
@@ -279,6 +277,25 @@ if __name__ == '__main__':
     #     # client(ip, port, "Hello World 3")
     #     server.shutdown()
     #     pass
+    pass
+
+
+if __name__ == '__main__':
+    # We need to log the output of this program to a file
+    # Open the log file in write mode
+    with open('/persist_vol/runpredictor.log.txt', 'w') as f:
+        # Redirect standard output and standard error to the log file
+        sys.stdout = f
+        sys.stderr = f
+
+        # Display some entrypoint message
+        print("-" * 50)
+        print("--STARTING")
+        print("-" * 50)
+
+        main()
+        print("--END")
+        pass
     pass
 
 

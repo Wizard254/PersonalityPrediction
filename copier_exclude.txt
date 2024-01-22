@@ -1,7 +1,0 @@
-dumps
-init/job_descriptions.csv
-out
-resumes
-streamlit
-venv
-db.sqlite3

@@ -41,8 +41,8 @@ ENV DJ_LOCAL=False
 ENV DJ_DEBUG=True
 
 #RUN python3 manage.py makemigrations
-RUN python3 manage.py migrate
-RUN python3 manage.py collectstatic
+RUN #python3 manage.py migrate
+RUN #python3 manage.py collectstatic
 #RUN python3 tmp.py
 
 EXPOSE 80

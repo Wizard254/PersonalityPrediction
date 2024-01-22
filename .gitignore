@@ -4,6 +4,7 @@
 /streamlit
 /venv
 /chat.md
-/db.sqlite3
-/debug.log
 /init/job_descriptions.csv
+Notes.md
+persist_vol
+commands.sh

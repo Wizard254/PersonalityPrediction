@@ -47,4 +47,4 @@ EXPOSE 80
 
 #ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8080"]
 #ENTRYPOINT ["python",  "-m", "uvicorn", "--host", "0.0.0.0", "--port", "80", "PersonalityPrediction.asgi:application"]
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]

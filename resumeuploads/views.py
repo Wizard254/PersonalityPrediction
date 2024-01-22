@@ -222,7 +222,7 @@ def sse_event_generator(resume_id):
         elif runpredictor.ping():
             # f = (r"C:\Users\Anyona\AWork\Mandela\Unit\Personality "
             #      r"ML\PersonalityPrediction\PersonalityPrediction\data\usecase1\resume.pdf")
-            prediction = runpredictorclient.predict_personality(doc.file.name)
+            prediction = runpredictorclient.predict_personality(doc.file.path)
             if prediction is None:
                 return
                 pass

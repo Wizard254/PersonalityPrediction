@@ -113,6 +113,9 @@ DATABASES = {
 }
 
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     }
@@ -152,7 +155,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = Path(MEDIA_ROOT) / 'static/'
-
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",

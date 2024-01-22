@@ -97,9 +97,9 @@ AUTHENTICATION_BACKENDS = [
 # WSGI_APPLICATION = 'PersonalityPrediction.wsgi.application'
 ASGI_APPLICATION = 'PersonalityPrediction.asgi.application'
 
-PERSIST_VOL = '/persist_vol' if not LOCAL else './'
+PERSIST_VOL = '/persist_vol' if not LOCAL else './persist_vol'
 
-MEDIA_ROOT = PERSIST_VOL if not LOCAL else ''
+MEDIA_ROOT = PERSIST_VOL
 MEDIA_URL = '/media/'
 
 # Database
@@ -151,12 +151,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static/'
+STATIC_ROOT = Path(MEDIA_ROOT) / 'static/'
 
-#
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-# ]
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -179,7 +179,7 @@ LOGGING = {
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "debug.log",
+            "filename": Path(PERSIST_VOL) / "debug.log",
         },
     },
     "loggers": {

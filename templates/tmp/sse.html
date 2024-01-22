@@ -1,0 +1,48 @@
+<html lang="en">
+<head>
+    <title>SSE HOME</title>
+</head>
+
+<body>
+
+<div>Messages:</div>
+<ol id="sse"></ol>
+<div id="prediction"></div>
+<div id="error"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const evtSource = new EventSource("/sse/", {
+            withCredentials: true,
+        });
+
+        evtSource.onmessage = (event) => {
+            const newElement = document.createElement("li");
+            const eventList = document.getElementById("sse");
+
+            newElement.textContent = `message: ${event.data}`;
+            eventList.appendChild(newElement);
+        };
+
+        evtSource.addEventListener("error", (event) => {
+            const element = document.getElementById("error");
+            element.textContent = event.data
+        });
+        
+        evtSource.addEventListener("prediction", (event) => {
+            const element = document.getElementById("prediction");
+            element.textContent = event.data
+        });
+        
+        evtSource.addEventListener("ping", (event) => {
+            const newElement = document.createElement("li");
+            const eventList = document.getElementById("list");
+            const time = JSON.parse(event.data).time;
+            newElement.textContent = `ping at ${time}`;
+            eventList.appendChild(newElement);
+        });
+
+    })
+</script>
+</body>
+</html>

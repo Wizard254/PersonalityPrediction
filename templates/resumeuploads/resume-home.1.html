@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Uploaded Resumes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="{% static 'css/main.css' %}"
+          crossorigin="anonymous">
+</head>
+<body>
+
+{# We'll need a CSRF Token #}
+<form>
+    {% csrf_token %}
+</form>
+
+<h4 style="padding: 20px 20px 0;">Uploaded Resumes </h4>
+
+<div style="padding: 20px">
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+        {% for document in user_documents %}
+            {#    <p>{{ document.id }} - {{ document.file.name }}</p>#}
+
+            <div class="col resume-card"
+                 data-resume-id="{{ document.id }}"
+                 data-file-name="{{ document.file.name }}">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ document.file.name }}</h5>
+                    </div>
+                    <div class="card-footer">
+                        {% if document.mbti is not None %}
+                            <span>
+                            <span class="md-key-word">{{ document.mbti }}</span>
+                            <span class="text-body-secondary">•&nbsp;</span>
+                            </span>
+                        {% else %}
+                            <span style="display: none;">
+                            <span class="md-key-word">ENTP</span>
+                            <span class="text-body-secondary">•&nbsp;</span>
+                            </span>
+                        {% endif %}
+                        <small class="text-body-secondary">Uploaded {{ document.created_at }}</small>
+                    </div>
+                </div>
+            </div>
+            {#    personality, job category, job recommendations #}
+        {% empty %}
+            <p>Oops! No documents uploaded</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="jobRecommendationModal" tabindex="-1"
+     aria-labelledby="jobRecommendationModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-4" id="jobRecommendationModalLabel">
+                    {# The name of the resume will be here #}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {# Body for the Job Recommendation Modal Dialogue #}
+
+                {# Progress bar as we wait for the job recommendations #}
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div>
+                            <object data="{% static 'svg/animation/progress/loader.svg' %}"
+                                    type="image/svg+xml" width="48px" height="48px"></object>
+                        </div>
+                        <div class="progress-message">Retrieving Job Recommendations...</div>
+                    </div>
+                </div>
+
+
+                <div id="jobTable" style="display: none; padding: 20px 20px 0;">
+                    <h4>1. Personality Prediction</h4>
+                    <p>Based on the contents of the Resume, we predicted the owner to be of the MBTI type:
+                        <span class="md-key-word" id="id40"></span>
+                    </p>
+
+                    <div id="id41"></div>
+
+                    <br/>
+                    <h4>2. Job Recommendations</h4>
+                    <p>Considering your personality and technical background, as stipulated in your Resume,
+                        we find you fit to apply for the following jobs:
+                    </p>
+                    <br/>
+
+                    {# The Job recommendations will be displayed here #}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Job Description</th>
+                        </tr>
+                        </thead>
+                        <tbody id="jobTableBody"></tbody>
+                    </table>
+
+                </div>
+
+
+                {# We use this modal to display a single Job Recommendation #}
+                <div class="modal fade" id="jobModal" tabindex="-1"
+                     aria-labelledby="jobModalTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="jobModalTitle"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="jobModalBody"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="{% static 'js/resume-home.js' %}"></script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import json
+import pathlib
 import socket
 import socketserver
 import threading
@@ -6,6 +7,7 @@ from dataclasses import dataclass
 
 from loguru import logger
 
+import constants
 import heavyimport
 
 
@@ -50,17 +52,8 @@ class PredictorRequest:
 
 HOST, PORT = "localhost", 10051
 
-STATUS_DICT = {
-    0: 'idle',
-    1000: 'loading model',
-    1001: 'waiting for model load',
-    400: 'bad request',
-    500: 'error loading model',
-    501: 'error making prediction',
-    200: 'ok',
-    -1: 'unprocessed',
-    1: '',
-}
+STATUS_DICT = {0: 'idle', 1000: 'loading model', 1001: 'waiting for model load', 400: 'bad request',
+    500: 'error loading model', 501: 'error making prediction', 200: 'ok', -1: 'unprocessed', 1: '', }
 
 
 @dataclass
@@ -70,17 +63,6 @@ class ConstRequestTypes:
     REFRESH_PREDICTION: int = 3
     NORMAL: int = 0
     pass
-
-
-#
-# def client(ip, port, message):
-#     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-#         sock.connect((ip, port))
-#         sock.sendall(bytes(message, 'ascii'))
-#         response = str(sock.recv(1024), 'ascii')
-#         print("Received: {}".format(response))
-#         pass
-#     pass
 
 
 def ping() -> bool:
@@ -263,45 +245,11 @@ def main():
         server.shutdown()
         pass
 
-    # with server:
-    #     ip, port = server.server_address
-    #
-    #     # Start a thread with the server -- that thread will then start one
-    #     # more thread for each request
-    #     server_thread = threading.Thread(target=server.serve_forever)
-    #     # Exit the server thread when the main thread terminates
-    #     # server_thread.daemon = True
-    #     server_thread.start()
-    #     print("Server loop running in thread:", server_thread.name)
-    #     server_thread.join()
-    #
-    #     # client(ip, port, "Hello World 1")
-    #     # client(ip, port, "Hello World 2")
-    #     # client(ip, port, "Hello World 3")
-    #     server.shutdown()
-    #     pass
     pass
 
 
 if __name__ == '__main__':
-    logger.add("log.runpredictor.log", rotation="500 MB")
+    # Write logs in the mounted docker volume
+    logger.add(pathlib.Path(constants.DOCKER_VOLUME) / "log.runpredictor.log", rotation="500 MB")
     main()
-    pass
-
-
-def __docx__():
-    import json
-
-    # Create an instance of the MyData class
-    my_data = PredictorResponse(status=200, mbti="INFJ", category="personality")
-
-    # Serialize the instance to JSON format
-    json_data = json.dumps(my_data.__dict__)
-
-    # Deserialize the JSON data back to Python format
-    deserialized_data = PredictorResponse(**json.loads(json_data))
-
-    # Print the original data and the deserialized data
-    print(f"Original data: {my_data}")
-    print(f"Deserialized data: {deserialized_data}")
     pass

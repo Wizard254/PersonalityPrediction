@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 
+import constants
+
 # variable_value = os.environ.get('VARIABLE_NAME')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-r3)dr%3du@vo))5v$-uho$$fz&e-2*w9=5f=4r1g3=a8vl_xdh
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJ_DEBUG', 'False') == 'True'
-LOCAL: bool = os.environ.get('DJ_LOCAL', 'True') == 'True'
+LOCAL = constants.LOCAL
 
 ALLOWED_HOSTS = ['62.72.23.246', '127.0.0.1']
 
@@ -97,9 +99,9 @@ AUTHENTICATION_BACKENDS = [
 # WSGI_APPLICATION = 'PersonalityPrediction.wsgi.application'
 ASGI_APPLICATION = 'PersonalityPrediction.asgi.application'
 
-PERSIST_VOL = '/persist_vol' if not LOCAL else './persist_vol'
+DOCKER_VOLUME = constants.DOCKER_VOLUME
 
-MEDIA_ROOT = PERSIST_VOL
+MEDIA_ROOT = DOCKER_VOLUME
 MEDIA_URL = '/media/'
 
 # Database
@@ -108,7 +110,7 @@ MEDIA_URL = '/media/'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': Path(PERSIST_VOL) / 'db.sqlite3',
+        'NAME': Path(DOCKER_VOLUME) / 'db.sqlite3',
     }
 }
 
@@ -181,7 +183,7 @@ LOGGING = {
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": Path(PERSIST_VOL) / "debug.log",
+            "filename": Path(DOCKER_VOLUME) / "debug.log",
         },
     },
     "loggers": {

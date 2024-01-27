@@ -34,8 +34,13 @@ class JobDescription(models.Model):
 class JobApplicationModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(JobDescription, on_delete=models.CASCADE)
+    resume = models.ForeignKey(Document, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.IntegerField(default=1)
+
+    class Meta:
+        unique_together = ['user', 'job', 'resume']
+        pass
 
     @dataclasses.dataclass
     class Status:

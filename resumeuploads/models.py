@@ -1,3 +1,5 @@
+import dataclasses
+
 from django.db import models
 
 # Create your models here.
@@ -33,5 +35,12 @@ class JobApplicationModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(JobDescription, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=100)
+    status = models.IntegerField(default=1)
+
+    @dataclasses.dataclass
+    class Status:
+        WAITING: int = 1
+        SUCCESS: int = 2
+        DECLINED: int = 3
+        pass
     pass

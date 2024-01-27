@@ -1,18 +1,22 @@
-import asyncio
 import dataclasses
 import json
 import threading
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponseNotFound, StreamingHttpResponse
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+# from django.http import Http404
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from resumeuploads.forms import DocumentForm
 from resumeuploads.models import Document, JobDescription
+from resumeuploads.serializers import JobDescriptionSerializer
 
 
 @login_required
@@ -242,3 +246,73 @@ def sse_event_generator(resume_id):
                                         "Was it started? Did it die?"})
         return
         pass
+
+
+# Django Rest framework class-based views
+def api_return400(message: str):
+    return Response({'detail': message},
+                    status=status.HTTP_400_BAD_REQUEST)
+    pass
+
+
+class JobDescriptionSearch(APIView):
+    """
+    Search for key instances of recorded Job Descriptions
+    """
+
+    @staticmethod
+    def get(request, format=None):
+        if request.GET.get('format') == 'api':
+            return Response({
+                "count": 102,
+                "page": 1,
+                "pages": 2,
+                "results": []
+            })
+            pass
+        return Response(status=405)
+        pass
+
+    @staticmethod
+    def post(request, format=None):
+        query_: str = request.data['query']
+        limit_str: str = request.data['limit']
+        page_str: str = request.data['page']
+
+        page = 1
+        if limit_str is not None:
+            field = None
+            try:
+                field = 'limit'
+                limit = int(limit_str)
+
+                if page_str is not None:
+                    field = 'page'
+                    page = int(page_str)
+                    pass
+                pass
+            except ValueError:
+                return api_return400(f"The field, {field}, needs a valid integer")
+                pass
+            pass
+        else:
+            limit = 20
+            pass
+
+        if query_ is None or len(query_) == 0:
+            return api_return400("The field, query, can't be null or empty")
+            pass
+
+        contact_list = JobDescription.objects.filter(title__icontains=query_).order_by('id')
+        # Show `limit` job descriptions per page.
+        paginator = Paginator(contact_list, limit)
+        page_obj = paginator.get_page(page)
+        jds: list[JobDescription] = page_obj.object_list
+
+        serializer = JobDescriptionSerializer(jds, many=True)
+        return Response({
+            "count": paginator.count,
+            "page": page,
+            "pages": paginator.num_pages,
+            "results": serializer.data
+        })

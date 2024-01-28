@@ -1,3 +1,4 @@
+import argparse
 import json
 import pathlib
 import socket
@@ -53,7 +54,7 @@ class PredictorRequest:
 HOST, PORT = "localhost", 10051
 
 STATUS_DICT = {0: 'idle', 1000: 'loading model', 1001: 'waiting for model load', 400: 'bad request',
-    500: 'error loading model', 501: 'error making prediction', 200: 'ok', -1: 'unprocessed', 1: '', }
+               500: 'error loading model', 501: 'error making prediction', 200: 'ok', -1: 'unprocessed', 1: '', }
 
 
 @dataclass
@@ -92,10 +93,13 @@ def ping() -> bool:
     pass
 
 
+status: int = 0
+
+
 def main():
+    global status
     prediction_queue = []
     prediction_cache: dict[str, list] = {}
-    status: int = 0
 
     lock = threading.Lock()
     queue_lock = threading.Lock()
@@ -106,6 +110,7 @@ def main():
             """
             :return: status 1000 if the model is still loading
             """
+            global status
             data = self.request.recv(1024)
             request = PredictorRequest.from_data(data)
             response = PredictorResponse(status=-1, mbti='', category='')
@@ -120,11 +125,11 @@ def main():
                     import time
                     # Load the model
                     start = time.time()
-                    logger.info("Loading Model..")
+                    logger.info("[WAIT] Loading Model..")
                     # print(f'[WAIT] Loading model...')
                     heavyimport.load_model()
                     # print(f'[WAIT] Model Loaded ({time.time() - start} ms)')
-                    logger.info(f'Model Loaded ({time.time() - start} seconds)')
+                    logger.info(f'[WAIT] Model Loaded ({time.time() - start} seconds)')
                     # Wait for predictions
                     mbti, category = heavyimport.predict(request.resume)
                     # Return prediction
@@ -143,7 +148,6 @@ def main():
                 #     pass
                 pass
 
-            global status
             lock.acquire()
             if status == 0:
                 # Load the model
@@ -173,7 +177,7 @@ def main():
                 response.status = 1001
                 return self.request.sendall(response.data())
                 pass
-            elif status == 2:
+            elif status == 2 and len(request.resume) > 0:
                 # We have loaded the model, we can make predictions now
                 lock.release()
                 try:
@@ -249,7 +253,46 @@ def main():
 
 
 if __name__ == '__main__':
-    # Write logs in the mounted docker volume
-    logger.add(pathlib.Path(constants.DOCKER_VOLUME) / "log.runpredictor.log", rotation="500 MB")
-    main()
+    # Create the argument parser
+    parser = argparse.ArgumentParser()
+
+    # Add the command-line switch
+    parser.add_argument('--load_model',
+                        action='store_true',
+                        help='Run as a client to load the prediction model')
+
+    # Parse the command-line arguments
+    args = parser.parse_args()
+
+    # Check if the verbose switch was specified
+    is_load_model = args.load_model
+
+    # Print whether the verbose switch was specified
+    if is_load_model:
+        # Write logs in the mounted docker volume
+        logger.add(pathlib.Path(constants.DOCKER_VOLUME) / "log.runpredictor.load_model.log",
+                   rotation="500 MB")
+        if ping():
+            response: PredictorResponse
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.connect((HOST, PORT))
+                request = PredictorRequest(resume='')
+                logger.info(f'Sending: {request.__dict__}')
+                sock.sendall(request.data())
+                response_data = sock.recv(1024)
+                response = PredictorResponse.from_data(response_data)
+                logger.info("Received: {}".format(response.__dict__))
+                pass
+            pass
+        else:
+            logger.warning(f'Failed to connect to subprocess (Is it started?)')
+            pass
+        pass
+    else:
+        # Write logs in the mounted docker volume
+        logger.add(pathlib.Path(constants.DOCKER_VOLUME) / "log.runpredictor.log",
+                   rotation="500 MB")
+        main()
+        pass
+
     pass

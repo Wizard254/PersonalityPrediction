@@ -40,7 +40,7 @@ RUN python3 installs.py
 ENV DJ_LOCAL=False
 ENV DJ_DEBUG=True
 
-EXPOSE 80
+EXPOSE 443
 
 #HEALTHCHECK CMD curl --fail http://localhost:8000/_stcore/health
 #ENTRYPOINT ["streamlit", "run", "personalityprediction.py", "--server.port=8501", "--server.address=0.0.0.0"]

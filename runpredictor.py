@@ -281,11 +281,11 @@ if __name__ == '__main__':
                 sock.sendall(request.data())
                 response_data = sock.recv(1024)
                 response = PredictorResponse.from_data(response_data)
-                logger.info("Received: {}".format(response.__dict__))
+                logger.info(f"Received: {response.__dict__}")
                 pass
             pass
         else:
-            logger.warning(f'Failed to connect to subprocess (Is it started?)')
+            logger.warning('Failed to connect to subprocess (Is it started?)')
             pass
         pass
     else:

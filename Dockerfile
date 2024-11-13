@@ -50,5 +50,6 @@ EXPOSE 443
 
 # Give executable permissions to the entrypoint file
 RUN chmod a+x ./entrypoint.sh
+RUN mkdir /persist_vol/
 
 ENTRYPOINT ["./entrypoint.sh"]

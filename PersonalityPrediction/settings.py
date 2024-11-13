@@ -30,7 +30,8 @@ SECRET_KEY = 'django-insecure-r3)dr%3du@vo))5v$-uho$$fz&e-2*w9=5f=4r1g3=a8vl_xdh
 DEBUG = os.environ.get('DJ_DEBUG', 'False') == 'True'
 LOCAL = constants.LOCAL
 
-ALLOWED_HOSTS = ['62.72.23.246', '127.0.0.1', 'personality.coolstudents272.com']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['62.72.23.246', '127.0.0.1', 'personality.coolstudents272.com']
 
 # Application definition
 
